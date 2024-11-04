@@ -1,39 +1,65 @@
 import { model, Schema } from 'mongoose';
+import { authPayload } from '../Apis/auth/interface';
 
 export interface IUser {
     id: string;
-    username: string;
     email: string;
-    avatar_url: String;
     password: string;
+    parish_name: string;
+    personal_name: string;
+    phone_number: string;
+    user_image: String;
+    residental_address: string;
     role: 'Basic' | 'Admin';
-    auth_type: 'form' | 'google' | 'github' | 'x';
+    category: 'YAYA' | 'Adults';
+    class_name: string;
 }
+
 const userSchema = new Schema(
     {
-        username: {
+        parish_name: {
+            type: String,
+        },
+        personal_name: {
+            type: String,
+        },
+        phone_number: {
+            type: String,
+        },
+        residental_address: {
             type: String,
         },
         email: {
             type: String,
             unique: true,
         },
-        avatar_url: {
+        user_image: {
             type: String,
             default: '',
         },
         password: {
             type: String,
         },
+        class_name: {
+            type: String,
+        },
         role: {
             type: String,
             enum: ['Basic', 'Admin'],
             default: 'Basic',
+            validate: {
+                validator: (v: string) => v !== '',
+                message: "Role can't be empty.",
+            },
         },
-        auth_type: {
+        category: {
             type: String,
-            enum: ['form', 'google', 'github', 'x'],
-            default: 'form',
+            enum: ['YAYA', 'Adults'],
+            default: 'YAYA',
+            validate: {
+                validator: (v: string) => v !== '',
+                message: "Category can't be empty.",
+            },
         },
     },
     {
@@ -49,21 +75,17 @@ export default class UserModel {
         return userExist;
     }
 
-    async CreateUser(
-        username: string,
-        email: string,
-        hash: string
-    ): Promise<IUser | null> {
+    async CreateUser(userData: authPayload): Promise<IUser> {
         try {
             const user = await User.create({
-                username: username,
-                email: email,
-                password: hash,
+                ...userData,
             });
             return user;
-        } catch (error) {
-            console.error('Error creating user:', error);
-            return null;
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                throw new Error(`User creation failed: ${error.message}`);
+            }
+            throw new Error('An unknown error occurred during user creation.');
         }
     }
 
@@ -80,6 +102,6 @@ export default class UserModel {
                 new: true,
             }
         );
-        return null;
+        return 'password updated succesfully!';
     }
 }
