@@ -17,20 +17,16 @@ export default class Service {
     }
     async register(payload: authPayload) {
         try {
-            const { username, email, password } = payload;
 
-            const userExist = await this.userModel.UserExists(email);
+            const userExist = await this.userModel.UserExists(payload.email);
             if (userExist) {
                 throw new BadRequestException('Email already exists');
             }
 
-            const hash = await bcryptService.hashPassword(password);
+            const hash = await bcryptService.hashPassword(payload.password);
+            const newUserPayload = { ...payload, password: hash };
 
-            const new_user = await this.userModel.CreateUser(
-                username,
-                email,
-                hash
-            );
+            const new_user = await this.userModel.CreateUser(newUserPayload);
 
             if (!new_user) {
                 throw new Error('User registration failed');

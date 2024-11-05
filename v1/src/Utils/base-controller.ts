@@ -24,33 +24,37 @@ class BaseController {
         }
     }
 
-    responsHandler = (
+    responseHandler(
         res: Response,
-        status: number,
+        status: number = 500, 
         message: string,
         data: any = null
-    ) => {
-        res.status(status).json({
-            status: status,
-            error: /^4/.test(status.toString()) ? true : false,
-            message: message,
-            data,
-        });
-    };
+    ) {
+        const statusCode = status || 500;
 
-    static responsHandler = (
-        res: Response,
-        status: number,
-        message: string,
-        data: any = null
-    ) => {
-        res.status(status).json({
-            status: status,
-            error: /^4/.test(status.toString()) ? true : false,
-            message: message,
+        res.status(statusCode).json({
+            status: statusCode,
+            error: /^4/.test(statusCode.toString()) ? true : false,
+            message,
             data,
         });
-    };
+    }
+
+    static responseHandler(
+        res: Response,
+        status: number = 500,
+        message: string,
+        data: any = null
+    ) {
+        const statusCode = status || 500;
+
+        res.status(statusCode).json({
+            status: statusCode,
+            error: /^4/.test(statusCode.toString()) ? true : false,
+            message,
+            data,
+        });
+    }
 
     extractPagingParams(req: Request) {
         let {

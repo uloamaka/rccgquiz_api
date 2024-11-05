@@ -5,7 +5,8 @@ import { StatusCodes } from 'http-status-codes';
 import { z, ZodError } from 'zod';
 
 const registerSchema = z.object({
-    username: z.string().min(4, 'Username must be at least 4 characters'),
+    personal_name: z.string().min(4, 'Username must be at least 4 characters'),
+    parish_name: z.string().min(4, 'Parish name must be at least 4 characters'),
     email: z.string().email('Invalid email format'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
 });
@@ -35,9 +36,9 @@ export default class Controller extends BaseController {
                 maxAge: 20 * 60 * 1000,
             });
 
-            this.responsHandler(res, StatusCodes.CREATED, message, data);
+            this.responseHandler(res, StatusCodes.CREATED, message, data);
         } catch (error: any) {
-            BaseController.responsHandler(
+            BaseController.responseHandler(
                 res,
                 error.code,
                 error.message,
@@ -57,9 +58,9 @@ export default class Controller extends BaseController {
                 maxAge: 20 * 60 * 1000,
             });
 
-            this.responsHandler(res, StatusCodes.OK, message, data);
+            this.responseHandler(res, StatusCodes.OK, message, data);
         } catch (error: any) {
-            BaseController.responsHandler(
+            BaseController.responseHandler(
                 res,
                 error.code,
                 error.message,
@@ -74,9 +75,9 @@ export default class Controller extends BaseController {
 
             const { message } = await this.service.sendResetLink(req.body);
 
-            this.responsHandler(res, StatusCodes.OK, message);
+            this.responseHandler(res, StatusCodes.OK, message);
         } catch (error: any) {
-            BaseController.responsHandler(
+            BaseController.responseHandler(
                 res,
                 error.code,
                 error.message,
@@ -93,9 +94,9 @@ export default class Controller extends BaseController {
                 req.params
             );
 
-            this.responsHandler(res, StatusCodes.OK, message);
+            this.responseHandler(res, StatusCodes.OK, message);
         } catch (error: any) {
-            BaseController.responsHandler(
+            BaseController.responseHandler(
                 res,
                 error.code,
                 error.message,

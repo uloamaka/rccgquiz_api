@@ -18,7 +18,7 @@ function router(app: Application, version: string) {
       res.send(healthcheck);
     } catch (error: any) {
       healthcheck.message = error;
-      BaseController.responsHandler(
+      BaseController.responseHandler(
         res,
         StatusCodes.SERVICE_UNAVAILABLE,
         'Service unavailable'
@@ -28,7 +28,7 @@ function router(app: Application, version: string) {
 
   // No matching route found
   app.use((req, res, next) => {
-    BaseController.responsHandler(
+    BaseController.responseHandler(
       res,
       StatusCodes.NOT_FOUND,
       'Resource does not exist, check endpoint or method'
