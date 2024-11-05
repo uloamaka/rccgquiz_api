@@ -3,6 +3,8 @@ import authRoutes from './auth/route';
 import BaseController from '../Utils/base-controller';
 import { Application } from 'express';
 import path from 'path';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs'; 
 
 function router(app: Application, version: string) {
   app.use(version, authRoutes);
@@ -27,9 +29,11 @@ function router(app: Application, version: string) {
     }
   });
 
-  app.get('/docs', (req, res) => {
-      res.sendFile(path.join(__dirname, 'Public', 'swagger.yaml'));
-  });
+  const swaggerDocument = YAML.load(
+      path.join(__dirname, '../Public/swagger.yaml')
+  );
+
+  app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
   // No matching route found
   app.use((req, res, next) => {
