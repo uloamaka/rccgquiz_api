@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import authRoutes from './auth/route';
 import BaseController from '../Utils/base-controller';
 import { Application } from 'express';
+import path from 'path';
 
 function router(app: Application, version: string) {
   app.use(version, authRoutes);
@@ -24,6 +25,10 @@ function router(app: Application, version: string) {
         'Service unavailable'
       );
     }
+  });
+
+  app.get('/docs', (req, res) => {
+      res.sendFile(path.join(__dirname, 'Public', 'swagger.yaml'));
   });
 
   // No matching route found
