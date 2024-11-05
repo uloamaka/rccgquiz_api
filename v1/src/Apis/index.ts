@@ -30,7 +30,7 @@ function router(app: Application, version: string) {
   });
 
   const swaggerDocument = YAML.load(
-      path.join(__dirname, '../Public/swagger.yaml')
+      path.join(__dirname, '../swagger.yaml')
   );
 
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
