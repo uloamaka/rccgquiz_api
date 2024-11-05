@@ -1,0 +1,227 @@
+openapi: 3.0.3
+info:
+  title: RCCGQUIZ_API Swagger
+  description: |-
+    This API provides functionalities for the RCCG Quiz application, including user registration and authentication.
+  termsOfService: http://example.com/terms/
+  contact:
+    email: support@example.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: https://rccgquiz-api.onrender.com/api/v1
+
+tags:
+  - name: auth
+    description: API for user registration and authentication
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                parish_name:
+                  type: string
+                  example: "Living Captain"
+                personal_name:
+                  type: string
+                  example: "Tester"
+                phone_number:
+                  type: string
+                  example: "07089894646"
+                user_image:
+                  type: string
+                  format: binary
+                  example: ""
+                residental_address:
+                  type: string
+                  example: "Tester Agba street"
+                email:
+                  type: string
+                  format: email
+                  example: "Test1004@gmail.com"
+                password:
+                  type: string
+                  format: password
+                  example: "123456"
+                category:
+                  type: string
+                  enum: ["YAYA", "Adults"]
+                  example: "Adults"
+                class_name:
+                  type: string
+                  example: ""
+              required:
+                - email
+                - password
+                - category
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  error:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Registration successful!"
+                  data: 
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Mjk4ZWViMmQ1OTZlNzhjMzA1ODE3OCIsImlhdCI6MTczMDc3NjgxMS"
+                      refresh_token:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Mjk4ZWViMmQ1OTZlNzhjMzA1ODE3OCIsImlhdCI6MTczMDc3NjgxMS"
+                      expires_at: 
+                        type: integer
+                        example: 1730777411
+
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequestErrorSchema"
+                
+        '422':
+          description: Unprocessed Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnprocessedEntityErrorSchema"
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Login a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "Test1004@gmail.com"
+                password:
+                  type: string
+                  format: password
+                  example: "123456"
+              required:
+                - email
+                - password
+                - category
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Login successful!"
+                  data: 
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Mjk4ZWViMmQ1OTZlNzhjMzA1ODE3OCIsImlhdCI6MTczMDc3NjgxMS"
+                      refresh_token:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Mjk4ZWViMmQ1OTZlNzhjMzA1ODE3OCIsImlhdCI6MTczMDc3NjgxMS"
+                      expires_at: 
+                        type: integer
+                        example: 1730777411
+
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequestErrorSchema"
+                
+        '422':
+          description: Unprocessed Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnprocessedEntityErrorSchema"
+
+
+components:
+  schemas:
+    BadRequestErrorSchema:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 400
+          description: HTTP status code for an bad request
+        error:
+          type: boolean
+          example: true
+          description: Indicates whether the response contains an error
+        message:
+          type: string
+        data:
+          type: string
+          example: null
+
+    UnprocessedEntityErrorSchema:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 422
+          description: HTTP status code for an unprocessable entity
+        error:
+          type: boolean
+          example: true
+          description: Indicates whether the response contains an error
+        message:
+          type: string
+          example: "Validation Error"
+          description: General error message for validation issues
+        data:
+          type: array
+          description: List of field-specific validation errors
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: "email"
+                description: The field name that caused the validation error
+              message:
+                type: string
+                example: "Invalid email format"
+                description: Detailed message explaining the validation error for the field
