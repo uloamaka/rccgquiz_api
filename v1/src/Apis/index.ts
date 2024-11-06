@@ -29,11 +29,16 @@ function router(app: Application, version: string) {
     }
   });
 
-  const swaggerDocument = YAML.load(
-      path.join(__dirname, '../swagger.yaml')
-  );
-
+  try {
+  const swaggerDocument = YAML.load('../v1/src/swagger.yaml');
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  app.get('/swagger.yaml', (req, res) => {
+    res.setHeader('Content-Type', 'text/yaml');
+    res.sendFile(path.join(__dirname, '../swagger.yaml'));
+  });
+  } catch (error) {
+    console.error('Error loading Swagger file:', error);
+  }
 
   // No matching route found
   app.use((req, res, next) => {
