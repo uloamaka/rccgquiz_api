@@ -12,10 +12,15 @@ info:
   version: 1.0.0
 servers:
   - url: https://rccgquiz-api.onrender.com/api/v1
+    description: Production server
+  - url: http://localhost:5000/api/v1
+    description: Development server
 
 tags:
   - name: auth
     description: API for user registration and authentication
+  - name: user-profile
+    description: API for user profile.
 
 paths:
   /auth/register:
@@ -176,8 +181,115 @@ paths:
               schema:
                 $ref: "#/components/schemas/UnprocessedEntityErrorSchema"
 
+  /forget-password:
+    post:
+      tags:
+        - auth
+      summary: Send a reset link to the user's email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "Test1004@gmail.com"
+      responses:
+        201:
+          description: Password reset link sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Password Reset Link sent to email successfully!"   
+        404:
+          description: User not found!.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorSchema' 
+
+  /reset-password/:userId/:resetToken:
+    post:
+      tags:
+        - auth
+      summary: reset the user password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_password:
+                  type: string
+      responses:
+        201:
+          description: Password reset successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Password Reset successful!" 
+        404:
+          description: User not found!.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorSchema'            
+
+  /user/profile:
+    get:
+      tags:
+        - user-profile 
+      summary: return a logged in user profile.
+      description: Retrieves the profile of the authenticated user. Requires a Bearer token.
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+        401:
+          description: Unauthorized. Bearer token is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                     
+
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     BadRequestErrorSchema:
       type: object
@@ -225,3 +337,76 @@ components:
                 type: string
                 example: "Invalid email format"
                 description: Detailed message explaining the validation error for the field
+    
+    UserProfileResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 200
+        error:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "User profile retrieved successfully"
+        data:
+          $ref: '#/components/schemas/UserData'
+
+    UserData:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "6730d0f15195803a5bf08281"
+        parish_name:
+          type: string
+          example: "Living Captain"
+        personal_name:
+          type: string
+          example: "Tester"
+        phone_number:
+          type: string
+          example: "07089894646"
+        residental_address:
+          type: string
+          example: "Tester Agba street"
+        email:
+          type: string
+          example: "test1@gmail.com"
+        user_image:
+          type: string
+          example: ""
+        class_name:
+          type: string
+          example: ""
+        role:
+          type: string
+          example: "Basic"
+        category:
+          type: string
+          example: "Adults"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-11-10T15:27:45.829Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2024-11-10T15:27:45.829Z"
+        __v:
+          type: integer
+          example: 0
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 401
+        error:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Unauthorized access"

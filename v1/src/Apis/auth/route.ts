@@ -11,8 +11,4 @@ route.post('/forget-password', Ctrl.forgotPassword.bind(Ctrl));
 route.post('/reset-password/:userId/:resetToken', Ctrl.resetPassword.bind(Ctrl));
 
 
-// route.post('/auth/send-otp', Ctrl.sendOtp.bind(Ctrl)); // -send OTP or forget password | resend forget password
-// route.post('/auth/verify-otp', Ctrl.verifyOtp.bind(Ctrl)); // -verify OTP
-// route.patch('/auth/reset-password/:email', Ctrl.resetPassword.bind(Ctrl)); // -reset PAssword
-
 export default route;

@@ -1,5 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import authRoutes from './auth/route';
+import userRoute from './user-profile/route'
 import BaseController from '../Utils/base-controller';
 import { Application } from 'express';
 import path from 'path';
@@ -8,6 +9,7 @@ import YAML from 'yamljs';
 
 function router(app: Application, version: string) {
   app.use(version, authRoutes);
+  app.use(version, userRoute)
 
   app.get('/health', async (_req, res, _next) => {
     const healthcheck = {
