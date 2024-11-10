@@ -90,7 +90,7 @@ export default class UserModel {
     }
 
     async FindUserByID(userId: string) {
-        const user = await User.findOne({ _id: userId });
+        const user = await User.findOne({ _id: userId }).select('-password');
         return user;
     }
 
